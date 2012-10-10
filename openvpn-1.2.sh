@@ -12,63 +12,13 @@ PROTO='tcp'
 PORT='1194'
 
 
-ipserver() {					#	Interrogation user type utilisation et récupération de l'IP correspondante
-	######## IP PUBLIQUE ########
-	wget -q -O ip.tmp whatismyip.org
-	IP_PUBLIC=$(cat ip.tmp)
-	rm ip.tmp
-	#############################
 
-	######## IP PRIVEE ########
-	IP_PRIVEE=$(ip addr list eth0 |grep "inet " |cut -d' ' -f6|cut -d/ -f1)
-	###########################y
-	VALID="null"
-	
-	while :
-		do
-			echo "Mode LAN ou WAN ? [W/L]"
-			read MODE
-			if [ $MODE == "W" ]
-				then
-				VALID="WAN"
-				break
-			elif [ $MODE == "w" ]
-				then
-				VALID="WAN"
-				break
-			elif [ $MODE == "WAN" ]
-				then
-				VALID="WAN"
-				break
-			elif [ $MODE == "L" ]
-				then
-				VALID="LAN"
-				break
-			elif [ $MODE == "LAN" ]
-				then
-				VALID="LAN"
-				break
-			elif [ $MODE == "l" ]
-				then
-				VALID="LAN"
-				break
-			fi		
-	done
-		if [ $VALID == "WAN" ]
-			then
-			IP_SERVER=$IP_PUBLIC
-		elif [ $VALID == "LAN" ]
-			then
-			IP_SERVER=$IP_PRIVEE
-		fi
-}
-
-ipvpn() {						#	Intérrogation user IP réseau VPN
-	echo "IP réseau VPN désiré ($MASK):"
+ipvpn() {						#	Intï¿½rrogation user IP rï¿½seau VPN
+	echo "IP rï¿½seau VPN dï¿½sirï¿½ ($MASK):"
 	read IP
 	while :
 			do
-				echo "IP réseaux entrée : \"$IP $MASK\". Confirmer ? [Y/n]"
+				echo "IP rï¿½seaux entrï¿½e : \"$IP $MASK\". Confirmer ? [Y/n]"
 				read CONF
 				if [ $CONF == "Y" ]
 					then
@@ -97,12 +47,12 @@ ipvpn() {						#	Intérrogation user IP réseau VPN
 	fi
 }
 
-port() {						#	Intérrogation user port VPN
-	echo "Port du serveur (différent de $PORT):"
+port() {						#	Intï¿½rrogation user port VPN
+	echo "Port du serveur (diffï¿½rent de $PORT):"
 	read P
 	while :
 			do
-				echo "Port entré : \"$P\". Confirmer ? [Y/n]"
+				echo "Port entrï¿½ : \"$P\". Confirmer ? [Y/n]"
 				read CONF
 				if [ $CONF == "Y" ]
 					then
@@ -131,7 +81,7 @@ port() {						#	Intérrogation user port VPN
 	fi
 }
 
-vars() {						#	Charge les variables nécessaires à la création de serveurs et clients
+vars() {						#	Charge les variables nï¿½cessaires ï¿½ la crï¿½ation de serveurs et clients
 	#	easy-rsa parameter settings
 	export EASY_RSA="/etc/openvpn/easy-rsa"
 	export OPENSSL="openssl"
@@ -152,7 +102,7 @@ vars() {						#	Charge les variables nécessaires à la création de serveurs et cl
 	export KEY_EMAIL="christian@chuinard.fr"
 }
 
-confserver() {					#	Génère le fichier de conf serveur
+confserver() {					#	Gï¿½nï¿½re le fichier de conf serveur
 	echo "	# Serveur $PROTO/$PORT
 	mode server
 	proto $PROTO
@@ -188,7 +138,7 @@ confserver() {					#	Génère le fichier de conf serveur
 	" >> /etc/openvpn/$SERVER.conf
 }
 
-installovpn() {					#	Installe OpenVPN et créé les répertoires de base
+installovpn() {					#	Installe OpenVPN et crï¿½ï¿½ les rï¿½pertoires de base
 	apt-get update
 	apt-get install -y openvpn
 	mkdir /etc/openvpn/easy-rsa
@@ -200,7 +150,7 @@ removeovpn() {					#	Supprime ENTIEREMENT OpenVPN
 	rm -r /etc/openvpn
 }
 
-reinstallovpn() {				#   Réinstalle OpenVPN de A à Z
+reinstallovpn() {				#   Rï¿½installe OpenVPN de A ï¿½ Z
 	removeovpn
 	installationovpn
 }
@@ -213,7 +163,7 @@ cleanall() {					#	refait un dossier /etc/openvpn propre
 	cp /usr/share/doc/openvpn/examples/easy-rsa/2.0/* /etc/openvpn/easy-rsa/
 }
 
-buildserver() {					#	Créé les fichiers et certificats du premier serveur
+buildserver() {					#	Crï¿½ï¿½ les fichiers et certificats du premier serveur
 	vars
 	mkdir /etc/openvpn/jail
 	mkdir /etc/openvpn/clientconf
@@ -227,18 +177,18 @@ buildserver() {					#	Créé les fichiers et certificats du premier serveur
 	confserver
 }
 
-newserver() {					#	Créé les fichier des serveurs supplémentaires
+newserver() {					#	Crï¿½ï¿½ les fichier des serveurs supplï¿½mentaires
 	vars
 	/etc/openvpn/easy-rsa/pkitool --server $SERVER.$HOSTNAME
 	cp /etc/openvpn/easy-rsa/keys/$SERVER.$HOSTNAME.crt /etc/openvpn/easy-rsa/keys/$SERVER.$HOSTNAME.key /etc/openvpn/
 	confserver
 }
 
-buildclient() {					#	Créé un certificat client et les fichiers nécessaires
+buildclient() {					#	Crï¿½ï¿½ un certificat client et les fichiers nï¿½cessaires
 	vars	
 	#creation des certificats
 	/etc/openvpn/easy-rsa/pkitool $CLIENT.$HOSTNAME
-	#copie et création des fichiers clients
+	#copie et crï¿½ation des fichiers clients
 	mkdir /etc/openvpn/clientconf/$CLIENT.$HOSTNAME/
 	cp /etc/openvpn/easy-rsa/keys/$CLIENT.$HOSTNAME.crt /etc/openvpn/clientconf/$CLIENT.$HOSTNAME/
 	cp /etc/openvpn/easy-rsa/keys/$CLIENT.$HOSTNAME.key /etc/openvpn/clientconf/$CLIENT.$HOSTNAME/
@@ -271,7 +221,7 @@ buildclient() {					#	Créé un certificat client et les fichiers nécessaires
 	rm /etc/openvpn/clientconf/$CLIENT.$HOSTNAME.conf /etc/openvpn/clientconf/$CLIENT.$HOSTNAME.ovpn
 }
 
-tag() {							#	Créé un fichier tag dans /etc/openvpn pour vérifier qu'il s'agit bien d'une installation fait pas nos soins
+tag() {							#	Crï¿½ï¿½ un fichier tag dans /etc/openvpn pour vï¿½rifier qu'il s'agit bien d'une installation fait pas nos soins
 	echo "1" >> /etc/openvpn/tag
 }
 
@@ -281,11 +231,11 @@ revoke() {						#	Supprime un client
 	rm /etc/openvpn/clientconf/$CLIENT.$HOSTNAME.zip
 }
 
-restart() {						#	redémarre le service OpenVPN
+restart() {						#	redï¿½marre le service OpenVPN
 	/etc/init.d/openvpn restart
 }
 
-verifzip() {					#	Vérification installation de zip et installation si besoin
+verifzip() {					#	Vï¿½rification installation de zip et installation si besoin
 	if test -f  /usr/bin/zip
 		then
 		if test -f /usr/bin/unzip
@@ -325,7 +275,7 @@ confirm() {						#	Formulaire de confirmation Y/n
 	done
 }
 
-verifovpn() {					#	Vérifie une précédente installation d'OpenVPN
+verifovpn() {					#	Vï¿½rifie une prï¿½cï¿½dente installation d'OpenVPN
 	INSTALL="null"
 	TAG="null"
 	VALID="null"
@@ -374,7 +324,7 @@ installationovpn() {			#	Installation d'OpenVPN si pas d'installation deja prese
 	restart
 }
 
-reconfovpn() {					#	Reconfiguration OpenVPN (cas où pré-installation correcte)
+reconfovpn() {					#	Reconfiguration OpenVPN (cas oï¿½ prï¿½-installation correcte)
 	verifzip
 	ipserver
 	ipvpn
@@ -400,13 +350,13 @@ if [ $1 ]
 			else
 				if test -f /etc/openvpn/clientconf/$OPTARG.*
 					then
-					echo "Client \"$OPTARG\" déjà existant !"
+					echo "Client \"$OPTARG\" dï¿½jï¿½ existant !"
 				else
 					echo "Creation du client $OPTARG"
 					CLIENT=$OPTARG
 					addclient
 					echo "--------------------------------------------------------------------"
-					echo "Client $CLIENT ajouté !"
+					echo "Client $CLIENT ajoutï¿½ !"
 				fi
 			fi
 			;;
@@ -428,7 +378,7 @@ if [ $1 ]
 						revoke
 					else
 						echo "--------------------------------------------------------------------"
-						echo "Suppression annulée"
+						echo "Suppression annulï¿½e"
 					fi
 				else
 					echo "--------------------------------------------------------------------"
@@ -441,7 +391,7 @@ if [ $1 ]
 			verifovpn
 			if [ $VALID == "FULL" ]	#	Si installe correcte, reconfiguration
 				then
-				echo "OpenVPN déjà correctement installé."
+				echo "OpenVPN dï¿½jï¿½ correctement installï¿½."
 				ECHO="Voulez-vous le reconfigurer ?"
 				confirm
 				if [ $VALID == "YES" ]
@@ -449,25 +399,25 @@ if [ $1 ]
 					echo "Reconfiguration..."
 					reconfovpn
 					echo "--------------------------------------------------------------------"
-					echo "Reconfiguration terminée !"
+					echo "Reconfiguration terminï¿½e !"
 				else
 					echo "--------------------------------------------------------------------"
-					echo "Installation annulée"
+					echo "Installation annulï¿½e"
 				fi
 			elif [ $VALID == "ALF" ]	#	Si installe incorrecte, reinstallation
 				then
 				echo "Installation OpenVPN actuelle incorecte."
-				ECHO="Voulez-vous réinstaller OpenVPN ? Il sera ENTIEREMENT supprimer puis reinstaller !"
+				ECHO="Voulez-vous rï¿½installer OpenVPN ? Il sera ENTIEREMENT supprimer puis reinstaller !"
 				confirm
 				if [ $VALID == "YES" ]
 					then
 					echo "Reinstallation..."
 					reinstallovpn
 					echo "--------------------------------------------------------------------"
-					echo "Reinstallation terminée !"
+					echo "Reinstallation terminï¿½e !"
 				else
 					echo "--------------------------------------------------------------------"
-					echo "Installation annulée"
+					echo "Installation annulï¿½e"
 				fi
 			else	#	Si pas d'installation, installation
 				echo "Openvpn inexistant."
@@ -478,11 +428,11 @@ if [ $1 ]
 					echo "Installation..."
 					installationovpn
 					echo "--------------------------------------------------------------------"
-					echo "Installation terminée !"
+					echo "Installation terminï¿½e !"
 				elif [ $VALID == "NO" ]
 					then
 					echo "--------------------------------------------------------------------"
-					echo "installation annulée."
+					echo "installation annulï¿½e."
 				fi
 			fi
 			;;
@@ -498,7 +448,7 @@ if [ $1 ]
 					SERVER=$OPTARG
 					addserver
 					echo "--------------------------------------------------------------------"
-					echo "Nouveau serveur configuré !"
+					echo "Nouveau serveur configurï¿½ !"
 				fi
 			else
 				echo "Veuillez installer et configurer OpenVPN !"
@@ -509,18 +459,18 @@ if [ $1 ]
 			verifovpn
 			if [ $VALID != "NO" ]
 				then
-				ECHO="Voulez-vous faire une reconfiguration ? !!! Attention, toute configuration actuelle sera écrasée !!!"
+				ECHO="Voulez-vous faire une reconfiguration ? !!! Attention, toute configuration actuelle sera ï¿½crasï¿½e !!!"
 				confirm
 				if [ $VALID == "YES" ]
 					then
 					echo "Reconfiguration..."
 					reconf
 					echo "--------------------------------------------------------------------"
-					echo "Reconfiguration terminée !"
+					echo "Reconfiguration terminï¿½e !"
 				elif [ $VALID == "NO" ]
 						then
 					echo "--------------------------------------------------------------------"
-					echo "Reconfiguration annulée."
+					echo "Reconfiguration annulï¿½e."
 				fi
 			else
 				echo "Veuillez d'abord installer OpenVPN."
@@ -531,16 +481,16 @@ if [ $1 ]
 			verifovpn
 			if [ $VALID != "NO" ]
 				then
-				ECHO="Êtes-vous certain de vouloir supprimer OpenVPN ? TOUT LES FICHIERS ET SERVICES SERONTS SUPPRIMES ET DESINSTALLES !!!"
+				ECHO="ï¿½tes-vous certain de vouloir supprimer OpenVPN ? TOUT LES FICHIERS ET SERVICES SERONTS SUPPRIMES ET DESINSTALLES !!!"
 				confirm
 				if [ $VALID == "YES" ]
 					then
 					removeovpn
 					echo "--------------------------------------------------------------------"
-					echo "Suppression terminée."
+					echo "Suppression terminï¿½e."
 				else
 					echo "--------------------------------------------------------------------"
-					echo "Suppression annulée."
+					echo "Suppression annulï¿½e."
 				fi
 			else
 				echo "OpenVPN inexistant"
@@ -559,7 +509,7 @@ else
 	echo "	-c [client]	:	Ajoute un client"
 	echo "	-d [client]	:	Supprime un client"
 	echo "	-i		:	Execute l'installateur"
-	echo "	-s [serveur]	:	Ajoute un serveur ! nom serveur doit être différent de \"server\" !"
+	echo "	-s [serveur]	:	Ajoute un serveur ! nom serveur doit ï¿½tre diffï¿½rent de \"server\" !"
 	echo "	-r		:	Execute la reconfiguration du serveur"
-	echo "	-R		:	Désinstalle entièrement le serveur."
+	echo "	-R		:	Dï¿½sinstalle entiï¿½rement le serveur."
 fi
